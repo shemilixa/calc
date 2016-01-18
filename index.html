@@ -4,21 +4,21 @@
 	<meta charset="UTF-8">
 	<title>Calc</title>
 	<link rel="stylesheet" type="text/css" href="styles.css"/>
-	<script src="scripts.js" defer></script>
+	<script src="scripts.js"></script>
 </head>
 <body>
 	<div id="calc">
-		<div id="tablo">
+		<div class="tablo">
 			<span>0</span>
 		</div>
 		<table>
-			<tr>
+			<!--<tr>
 				<td>MC</td>
 				<td>MR</td>
 				<td>MS</td>
 				<td>M+</td>
 				<td>M-</td>
-			</tr>
+			</tr>-->
 			<tr>
 				<td>&#10229</td>
 				<td>CE</td>
@@ -54,6 +54,10 @@
 			</tr>
 		</table>
 	</div>
-
+	<script>
+		var useCalc = new Calc({
+			element: document.getElementById('calc')
+		});
+	</script>
 </body>
 </html>
