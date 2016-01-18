@@ -1,28 +1,68 @@
 'use strict';
 class Calc {
-	constructor(){
+	constructor(options){
+		this.calc = options.element;
+		this.tablo = this.calc.querySelector('.tablo').getElementsByTagName('span')[0];		
+		this.table = this.calc.querySelector('table');
+
+		this.table.onclick = this._eventsCalc.bind(this);
+		document.onkeydown = this._eventsKey.bind(this);
+		this.calc.onmousedown = this._dragNdrop.bind(this);
+
 
 		this.container = '';
 		this.intermediateValue = '';
-
 		this.numberA = '';
 		this.signA = '';
 		this.numberB = '';
 		this.signB = '';
-		this.sign = '';
-
-
-		this.calc = document.getElementById('calc');
-		this.tablo = document.getElementById('tablo').getElementsByTagName('span')[0];
-		this.table = document.getElementById('calc').querySelector('table');
-
-		this.table.onclick = event => this._eventsCalc(event.target);
-		document.onkeydown = event => this._eventsKey(event.keyCode);
-		this.calc.onmousedown = event => this._dragNdrop(event);
+		this.sign = '';	
 
 	}	
 
-	_eventsKey(eventKey){
+	_eventsCalc(event){
+		let eventTarget = event.target;
+		if (eventTarget.tagName == 'TD') {
+			switch(eventTarget.innerHTML){
+				case 'C':
+						this._clear();
+					break;
+				case 'CE':
+						this._clearNumber();
+					break;
+				case '\u27F5':
+						this._deleteLastCharacter();
+					break;
+				case '\u00B1':
+						this._minusPlusNumber();
+					break;
+				case '*':
+				case '/':
+				case '-':
+				case '+':
+						this._writeSign(eventTarget.innerHTML);
+					break;
+				case '1/x':
+						this._drob(eventTarget.innerHTML);
+					break; 
+				case '=':
+						this._calculation();			
+					break; 
+				case '\u221A':
+						this._sqrt();
+					break;
+				case '%':
+						this._percent();
+					break;
+				default :
+						this._writeNumbers(eventTarget.innerHTML);
+					break; 
+			}
+		}
+	}
+
+	_eventsKey(event){
+		let eventKey = event.keyCode;
 		//console.log(eventKey);
 		switch(eventKey) {
 			case 106 :
@@ -82,47 +122,6 @@ class Calc {
 				break;
 		}
 	}
-
-	_eventsCalc(eventTarget){
-		if (eventTarget.tagName == 'TD') {
-			switch(eventTarget.innerHTML){
-				case 'C':
-						this._clear();
-					break;
-				case 'CE':
-						this._clearNumber();
-					break;
-				case '\u27F5':
-						this._deleteLastCharacter();
-					break;
-				case '\u00B1':
-						this._minusPlusNumber();
-					break;
-				case '*':
-				case '/':
-				case '-':
-				case '+':
-						this._writeSign(eventTarget.innerHTML);
-					break;
-				case '1/x':
-						this._drob(eventTarget.innerHTML);
-					break; 
-				case '=':
-						this._calculation();			
-					break; 
-				case '\u221A':
-						this._sqrt();
-					break;
-				case '%':
-						this._percent();
-					break;
-				default :
-						this._writeNumbers(eventTarget.innerHTML);
-					break; 
-			}
-		}
-	}
-
 
 	_clear(){
 		this.tablo.innerHTML = 0;
@@ -210,24 +209,25 @@ class Calc {
 	}
 
 	_calculation(){
-		this.tablo.innerHTML = this.numberA = eval(this.signA+this.numberA+this.sign+this.signB+this.numberB);
-		this.numberA = 1*this.numberA;
-		this.signA = (this.numberA<0)?'-':'';		
-		this.numberB = '';
-		this.signB = '';
-		this.sign = '';
+			this.tablo.innerHTML = this.numberA = eval(this.signA+this.numberA+this.sign+this.signB+this.numberB);
+			this.numberA = 1*this.numberA;
+			this.signA = (this.numberA<0)?'-':'';		
+			this.numberB = '';
+			this.signB = '';
+			this.sign = '';
 	}
 
-	_dragNdrop(eventDrop){
-		if(eventDrop.target.tagName == 'DIV'){
+	_dragNdrop(event){
+		if(event.target.tagName == 'DIV'){
 			let coords = this._getCoords(this.calc);
-  			let shiftX = eventDrop.pageX - coords.left;
-  			let shiftY = eventDrop.pageY - coords.top;
-			this._moveAt(eventDrop, shiftX, shiftY);
+  			let shiftX = event.pageX - coords.left;
+  			let shiftY = event.pageY - coords.top;
+			this._moveAt(event, shiftX, shiftY);
 
 			document.body.appendChild(this.calc);
+
 			this.calc.style.zIndex = 1000; 
-			document.onmousemove = eventDrop => this._moveAt(eventDrop, shiftX, shiftY);
+			document.onmousemove = event => this._moveAt(event, shiftX, shiftY);
 			this.calc.onmouseup = () => {
 			    document.onmousemove = null;
 			    this.calc.onmouseup = null;
@@ -251,5 +251,3 @@ class Calc {
 	}
 
 }
-
-let useCalc = new Calc();
